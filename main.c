@@ -4,6 +4,7 @@
 #include "reader.h"
 #include "displayer.h"
 #include "editor.h"
+#include "writer.h"
 
 int main(int argc, char *argv[]) {
 	// assert_ndless_rev(801);
@@ -21,11 +22,15 @@ int main(int argc, char *argv[]) {
 
 		init_editor_buttons();
 
-		while (!isKeyPressed(KEY_NSPIRE_MENU)) {
+		line_t * head = sc->topmost_line;
+
+		while (!isKeyPressed(KEY_NSPIRE_ESC)) {
 			scan_keys(sc);
 		}
 
 		deinit_screen(sc);
+
+		write_file(argv[1], llist_to_string(head));
 	}
 	return 0;
 }

@@ -17,23 +17,21 @@ void insert_after(line_t * node, line_t * new_node) {
 	if (node == NULL) return;
 	
 	if (node->next != NULL) {
-		node->next->prev = NULL;
+		node->next->prev = new_node;
 	}
-	node->next = new_node;
 	
 	if (new_node != NULL) {
-		if (new_node->prev != NULL) {
-			new_node->prev->next = NULL;
-		}
 		new_node->prev = node;
+		new_node->next = node->next;
 	}
+	node->next = new_node;
 }
 
 void insert_before(line_t * node, line_t * new_node) {
 	if (node == NULL) return;
 	
 	if (node->prev != NULL) {
-		node->prev->next = NULL;
+		node->prev->next = new_node;
 	}
 	node->prev = new_node;
 
@@ -97,7 +95,7 @@ vstring llist_to_string(line_t * head) {
 	}
 
 	out.str = malloc((total_chars+1)*sizeof(char));
-	out.len = (size_t)(total_chars);
+	out.len = (size_t)(total_chars-1);
 
 	cur = head;
 	unsigned int main_index = 0;

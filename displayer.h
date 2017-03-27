@@ -23,12 +23,18 @@ typedef struct
 	unsigned int ideal_cursor_col;
 	uint16_t * buffer;
 	scr_type_t scr_type;
+	char mode;
+	// 0 = editing
+	// 1 = browsing files
+	// 2 = filename editing in file browser
 } screen;
 
 extern void move_cursor_up(screen * sc);
 extern void move_cursor_down(screen * sc);
 extern void move_cursor_left(screen * sc);
 extern void move_cursor_right(screen * sc);
+extern void update_cursor(screen * sc, unsigned int old_row, unsigned int old_col, unsigned int new_row, unsigned int new_col, uint16_t fg, uint16_t bg);
+
 
 extern void draw_text(screen * sc);
 extern void load_text(screen * sc, vstring text);

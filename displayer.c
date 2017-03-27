@@ -152,6 +152,10 @@ void move_cursor_left(screen * sc) {
 		sc->leftmost_index = acc;
 		draw_text(sc);
 	}
+	if (acc > sc->leftmost_index + NUM_COLS - 1) {
+		sc->leftmost_index = acc - NUM_COLS + 1;
+		draw_text(sc);
+	}
 	sc->displ_cursor_col = sc->actual_cursor_col - sc->leftmost_index;
 	update_cursor(sc, old_row, old_col, sc->cursor_row, sc->displ_cursor_col, white, black);
 
@@ -174,6 +178,10 @@ void move_cursor_right(screen * sc) {
 	}
 	sc->ideal_cursor_col = acc;
 	sc->actual_cursor_col = acc;
+	if (acc < sc->leftmost_index) {
+		sc->leftmost_index = acc;
+		draw_text(sc);
+	}
 	if (acc > sc->leftmost_index + NUM_COLS - 1) {
 		sc->leftmost_index = acc - NUM_COLS + 1;
 		draw_text(sc);
@@ -192,4 +200,5 @@ void load_text(screen * sc, vstring text) {
 	sc->actual_cursor_col = 0;
 	sc->ideal_cursor_col = 0;
 	sc->displ_cursor_col = 0;
+	sc->mode = 0;
 }

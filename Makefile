@@ -8,7 +8,7 @@ GENZEHN = genzehn
 
 GCCFLAGS = -Wall -W -marm
 LDFLAGS =
-ZEHNFLAGS = --name "tdisplay"
+ZEHNFLAGS = --name "tEdit"
 
 ifeq ($(DEBUG),FALSE)
 	GCCFLAGS += -Os
@@ -19,7 +19,7 @@ endif
 OBJS = $(patsubst %.c, %.o, $(shell find . -name \*.c))
 OBJS += $(patsubst %.cpp, %.o, $(shell find . -name \*.cpp))
 OBJS += $(patsubst %.S, %.o, $(shell find . -name \*.S))
-EXE = tdisplay
+EXE = tEdit
 DISTDIR = .
 vpath %.tns $(DISTDIR)
 vpath %.elf $(DISTDIR)
