@@ -65,9 +65,7 @@ void delete_before_cursor(screen * sc) {
 	}
 }
 
-void insert_after_cursor(screen * sc, char c) {
-	vstring * str = sc->current_line->vstr;
-	unsigned int col = sc->actual_cursor_col;
+void insert_after_cursor(vstring * str, char c, unsigned int col) {
 
 	char * buf = malloc((str->len+2)*sizeof(char));
 	unsigned int index = 0;
@@ -84,23 +82,22 @@ void insert_after_cursor(screen * sc, char c) {
 	free(str->str);
 	str->str = buf;
 	str->len++;
-
-	draw_text(sc);
-	move_cursor_right(sc);
 }
 
 void insert_char(screen * sc, uint16_t x, char mode) {
 	switch (mode) {
 		case 0:
-			insert_after_cursor(sc, normal_keypress[x]);
+			insert_after_cursor(sc->current_line->vstr, normal_keypress[x], sc->actual_cursor_col);
 			break;
 		case 1:
-			insert_after_cursor(sc, shift_keypress[x]);
+			insert_after_cursor(sc->current_line->vstr, shift_keypress[x], sc->actual_cursor_col);
 			break;
 		case 2:
-			insert_after_cursor(sc, ctrl_keypress[x]);
+			insert_after_cursor(sc->current_line->vstr, ctrl_keypress[x], sc->actual_cursor_col);
 			break;
 	}
+	draw_text(sc);
+	move_cursor_right(sc);
 }
 
 void insert_linebreak_after_cursor(screen * sc) {
@@ -146,6 +143,7 @@ void insert_linebreak_after_cursor(screen * sc) {
 	move_cursor_down(sc);
 	sc->displ_cursor_col = sc->actual_cursor_col = sc->ideal_cursor_col = 0;
 	draw_text(sc);
+	update_cursor(sc, old_row, old_col, sc->cursor_row, sc->displ_cursor_col, 0xffff, 0x0000);
 }
 
 void scan_keys(screen * sc) {

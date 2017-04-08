@@ -27,6 +27,7 @@ typedef struct
 	// 0 = editing
 	// 1 = browsing files
 	// 2 = filename editing in file browser
+	vstring * fqfilename;
 } screen;
 
 extern void move_cursor_up(screen * sc);
@@ -37,8 +38,11 @@ extern void update_cursor(screen * sc, unsigned int old_row, unsigned int old_co
 
 
 extern void draw_text(screen * sc);
+extern void draw_char(screen * sc, uint8_t row, uint8_t col, char c, uint16_t fg, uint16_t bg);
 extern void load_text(screen * sc, vstring text);
 extern void init_screen(screen * sc);
 extern void deinit_screen(screen * sc);
+
+extern void recurse_free_lines(screen * sc);
 
 #endif

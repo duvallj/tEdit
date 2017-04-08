@@ -9,6 +9,7 @@ void debug(unsigned int value) {
 
 void init_line_t_ptr(line_t * l) {
 	l->vstr = malloc(sizeof(vstring));
+	l->vstr->str = NULL;
 	l->next = NULL;
 	l->prev = NULL;
 }
@@ -77,6 +78,8 @@ line_t * string_to_llist(vstring str) {
 	}
 
 	tail = tail->prev;
+	free(tail->next->vstr->str);
+	free(tail->next->vstr);
 	free(tail->next);
 	tail->next = NULL;
 

@@ -8,6 +8,23 @@ void init_screen(screen * sc) {
 	sc->scr_type = lcd_type() == SCR_320x240_4 ? SCR_320x240_4 : SCR_320x240_565;
 	lcd_init(sc->scr_type);
 	memset(sc->buffer, 0, 320*240*sizeof(uint16_t));
+	sc->topmost_line = NULL;
+	sc->fqfilename = NULL;
+}
+
+void recurse_free_lines(screen * sc) {
+	line_t * current = sc->topmost_line;
+	while (current != NULL) {
+		line_t * next = current->next;
+		if (current->vstr != NULL) {
+			if(current->vstr->str != NULL) {
+				free(current->vstr->str);
+			}
+			free(current->vstr);
+		}
+		free(current);
+		current = next;
+	}
 }
 
 void deinit_screen(screen * sc) {
@@ -189,8 +206,6 @@ void move_cursor_right(screen * sc) {
 	sc->displ_cursor_col = sc->actual_cursor_col - sc->leftmost_index;
 	update_cursor(sc, old_row, old_col, sc->cursor_row, sc->displ_cursor_col, white, black);
 }
-
-
 
 void load_text(screen * sc, vstring text) {
 	sc->topmost_line = string_to_llist(text);

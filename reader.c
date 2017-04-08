@@ -12,6 +12,25 @@ vstring new_vstring(){
 	return str;
 }
 
+vstring concat(vstring a, vstring b) {
+	vstring n;
+	n.str = malloc((a.len+b.len+1)*sizeof(char));
+	n.len = a.len+b.len;
+	unsigned int i;
+	unsigned int x;
+	i=0;
+	for(x=0; x<a.len; x++) {
+		n.str[i] = a.str[x];
+		i++;
+	}
+	for(x=0; x<b.len; x++) {
+		n.str[i] = b.str[x];
+		i++;
+	}
+	n.str[i] = '\0';
+	return n;
+}
+
 vstring read_file(const char * filename) {
 	vstring output;
 	output.str = NULL;

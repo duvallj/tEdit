@@ -10,7 +10,7 @@
 #define INSERT_ACTION_LEN	50
 
 extern void delete_before_cursor(screen * sc);
-extern void insert_after_cursor(screen * sc, char c);
+extern void insert_after_cursor(vstring * str, char c, unsigned int col);
 extern void insert_linebreak_after_cursor(screen * sc);
 
 static void (*EDITOR_FUNCS[EDITOR_ACTION_LEN])(screen * sc) = {

@@ -10,6 +10,7 @@ typedef struct
 } vstring;
 
 extern vstring new_vstring();
+extern vstring concat(vstring a, vstring b);
 extern vstring read_file(const char * filename);
 
 #endif

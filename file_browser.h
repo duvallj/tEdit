@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
 
@@ -18,12 +19,16 @@ extern void move_fb_cursor_right(screen * sc);
 extern void move_fb_cursor_left(screen * sc);
 
 extern void toggle_filename_browsing(screen * sc);
-extern void swtich_to_editing(screen * sc);
+extern void fb_enter_pressed(screen * sc);
 
 extern void draw_fb(screen * sc);
 extern void init_fb_buttons();
+extern void init_fb(screen * sc);
+extern void set_filename(screen * sc, char * name);
+extern void fb_scan_keys(screen * sc);
 
 t_key FB_BUTTONS[FB_ACTION_LEN];
+static uint8_t fb_keypress_duration[FB_ACTION_LEN] = {0};
 
 static void (*FB_FUNCS[FB_ACTION_LEN])(screen * sc) = {
 	move_fb_cursor_up,
@@ -32,9 +37,9 @@ static void (*FB_FUNCS[FB_ACTION_LEN])(screen * sc) = {
 	move_fb_cursor_right,
 	delete_before_cursor,
 	toggle_filename_browsing,
-	switch_to_editing,
-	switch_to_editing
-}
+	fb_enter_pressed,
+	fb_enter_pressed
+};
 
 #define LINES_ABOVE	2
 #define LINES_BELOW	2
