@@ -10,6 +10,12 @@ void init_screen(screen * sc) {
 	memset(sc->buffer, 0, 320*240*sizeof(uint16_t));
 	sc->topmost_line = NULL;
 	sc->fqfilename = NULL;
+	sc->leftmost_index = 0;
+	sc->cursor_row = 0;
+	sc->actual_cursor_col = 0;
+	sc->ideal_cursor_col = 0;
+	sc->displ_cursor_col = 0;
+	sc->mode = 0;
 }
 
 void recurse_free_lines(screen * sc) {
@@ -210,10 +216,5 @@ void move_cursor_right(screen * sc) {
 void load_text(screen * sc, vstring text) {
 	sc->topmost_line = string_to_llist(text);
 	sc->current_line = sc->topmost_line;
-	sc->leftmost_index = 0;
-	sc->cursor_row = 0;
-	sc->actual_cursor_col = 0;
-	sc->ideal_cursor_col = 0;
-	sc->displ_cursor_col = 0;
-	sc->mode = 0;
+	
 }

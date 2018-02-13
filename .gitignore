@@ -1,1 +1,3 @@
+# Don't include any intermediate compiled files
 *.o
+*.elf

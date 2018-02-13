@@ -11,7 +11,10 @@ void set_current_directory_string() {
 	getcwd(cd, sizeof(cd));
 	free(current_directory->str);
 	current_directory->str = cd;
-	current_directory->len = sizeof(cd)-1;
+	current_directory->len = 0;
+	while(current_directory->str[current_directory->len] != '\0') {
+		current_directory->len++;
+	}
 }
 
 void open_directory(screen * sc, const char * fqdir) {
@@ -24,9 +27,12 @@ void open_directory(screen * sc, const char * fqdir) {
 
 	if ((dir = opendir(fqdir)) != NULL) {
 		while ((ent = readdir(dir)) != NULL ) {
+			printf(ent->d_name);
+			printf("\n");
 			tail->vstr = malloc(sizeof(vstring));
 			tail->vstr->len = strlen(ent->d_name);
-			tail->vstr->str = ent->d_name;
+			tail->vstr->str = malloc(sizeof(char)*(tail->vstr->len+1));
+			strcpy(tail->vstr->str, ent->d_name);
 			line_t * new_ent = malloc(sizeof(line_t));
 			init_line_t_ptr(new_ent);
 			insert_after(tail, new_ent);
@@ -59,6 +65,8 @@ void set_filename(screen * sc, char * name) {
 }
 
 void init_fb(screen * sc) {
+
+	sc->mode = 1;
 
 	current_directory_header = malloc(sizeof(vstring));
 	current_directory_header->str = "Current Directory:";
@@ -188,34 +196,47 @@ void toggle_filename_browsing(screen * sc) {
 
 
 void fb_enter_pressed(screen * sc) {
+	printf("Enter pressed\n");
 	if (sc->mode == 1) {
+		printf("Is in selecting mode\n");
 		vstring fqfn = concat(*current_directory, *sc->current_line->vstr);
-
+		printf("Did a concat\n");
 		struct stat statbuf;
 		if (stat(fqfn.str, &statbuf) != 0 && S_ISDIR(statbuf.st_mode) ) {
+			printf("Trying to open directory %s\n", fqfn.str);
 			open_directory(sc, fqfn.str);
 		} else {
+			printf("Switching to editing the file name\n");
 			filename = sc->current_line->vstr;
 			toggle_filename_browsing(sc);
 		}
 	}
 	else if (sc->mode == 2) {
+		printf("Is in filename editing mode\n");
 		vstring fqfn = concat(*current_directory, *filename);
-		
+		printf("Did a concat\n");
 		struct stat statbuf;
 		if(stat(fqfn.str, &statbuf) != 0 && S_ISDIR(statbuf.st_mode)) {
 			open_directory(sc, fqfn.str);
 		} else {
+			printf("Opening file sequence\n");
 			free(sc->fqfilename);
-			sc->fqfilename = &fqfn;
-
+			printf("a\n");
+			sc->fqfilename = malloc(sizeof(vstring));
+			sc->fqfilename->str = malloc(sizeof(char) * (fqfn.len + 1));
+			printf("b\n");
+			strcpy(sc->fqfilename->str, fqfn.str);
+			sc->fqfilename->len = fqfn.len;
+			printf("c\n");
 			vstring data = read_file(fqfn.str);
-
+			printf("d\n");
 			deinit_fb(sc);
 			if (data.str == NULL) {
 				data.str = "";
 			}
+			printf("e\n");
 			load_text(sc, data);
+			printf("f\n");
 		}
 	}
 }
@@ -241,6 +262,7 @@ void draw_fb(screen * sc) {
 				draw_char(sc, y, x, cl->vstr->str[x], 0xffff, 0);
 			}
 		}
+		cl = cl->next;
 	}
 	for(x=0; x<NUM_COLS && x<filename_header->len; x++) {
 		draw_char(sc, y, x, filename_header->str[x], 0xffff, 0);
@@ -249,6 +271,7 @@ void draw_fb(screen * sc) {
 	for(x=0; x<NUM_COLS && x+sc->leftmost_index<filename->len; x++) {
 		draw_char(sc, y, x, filename->str[sc->leftmost_index+x], 0xffff, 0);
 	}
+	lcd_blit(sc->buffer, sc->scr_type);
 }
 
 void fb_insert_char(screen * sc, uint16_t x, char mode) {
