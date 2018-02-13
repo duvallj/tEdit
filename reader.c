@@ -64,4 +64,3 @@ close_quit:
 
 	return output;
 }
-

@@ -6,6 +6,8 @@
 #include <libndls.h>
 #include <keys.h>
 
+#include <time.h>
+
 #define EDITOR_ACTION_LEN 	7
 #define INSERT_ACTION_LEN	50
 
@@ -27,8 +29,8 @@ t_key EDITOR_BUTTONS[EDITOR_ACTION_LEN];
 t_key INSERT_BUTTONS[INSERT_ACTION_LEN];
 
 extern void init_editor_buttons();
-static uint8_t editor_keypress_duration[EDITOR_ACTION_LEN] = {0};
-static uint8_t insert_keypress_duration[INSERT_ACTION_LEN] = {0};
+static clock_t editor_keypress_duration[EDITOR_ACTION_LEN] = {0};
+static clock_t insert_keypress_duration[INSERT_ACTION_LEN] = {0};
 
 static char normal_keypress[INSERT_ACTION_LEN] = {
 	'a','b','c','d','e','f',
@@ -62,11 +64,11 @@ static char ctrl_keypress[INSERT_ACTION_LEN] = {
 };
 
 
-//I have no way to measure time, everything has to be done in # loops
-#define ED_INITIAL_LOOP_COUNT	40
-#define ED_RESET_LOOP_COUNT	30
-#define IN_INITIAL_LOOP_COUNT	75
-#define IN_RESET_LOOP_COUNT	50
+//I have no way to measure time, everything has to be done in terms of clock cycles
+#define ED_INITIAL_LOOP_COUNT	4000
+#define ED_RESET_LOOP_COUNT		3000
+#define IN_INITIAL_LOOP_COUNT	7500
+#define IN_RESET_LOOP_COUNT		5000
 
 extern void scan_keys(screen * sc);
 

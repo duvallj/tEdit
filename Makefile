@@ -6,7 +6,7 @@ GXX = nspire-g++
 LD  = nspire-ld
 GENZEHN = genzehn
 
-GCCFLAGS = -Wall -W -marm
+GCCFLAGS = -Wall -W -Wno-unused-variable -Wno-unused-function -marm
 LDFLAGS =
 ZEHNFLAGS = --name "tEdit"
 

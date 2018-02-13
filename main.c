@@ -45,8 +45,12 @@ int main(int argc, char *argv[]) {
 				break;
 		}
 	}
+	printf("Got to writing the file\n");
 	if (sc->fqfilename != NULL) {
-		write_file(sc->fqfilename->str, llist_to_string(head));
+		printf("%s\n", sc->fqfilename->str);
+		vstring data = llist_to_string(sc->topmost_line);
+		printf("%s\n", data.str);
+		write_file(sc->fqfilename->str, data);
 	}
 	deinit_screen(sc);
 	return 0;

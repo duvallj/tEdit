@@ -216,5 +216,4 @@ void move_cursor_right(screen * sc) {
 void load_text(screen * sc, vstring text) {
 	sc->topmost_line = string_to_llist(text);
 	sc->current_line = sc->topmost_line;
-	
 }

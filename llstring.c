@@ -94,6 +94,7 @@ vstring llist_to_string(line_t * head) {
 	line_t * cur = head;
 	while (cur != NULL) {
 		total_chars += cur->vstr->len;
+		printf("%d\n", total_chars);
 		cur = cur->next;
 	}
 

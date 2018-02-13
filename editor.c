@@ -1,5 +1,7 @@
 #include "editor.h"
 
+clock_t last_clock = 0;
+
 void delete_before_cursor(screen * sc) {
 	if (sc->actual_cursor_col) {
 		vstring * st = sc->current_line->vstr;
@@ -147,6 +149,16 @@ void insert_linebreak_after_cursor(screen * sc) {
 }
 
 void scan_keys(screen * sc) {
+	clock_t cur_clock = clock();
+	
+	clock_t diff;
+	
+	if (cur_clock > last_clock) {
+		diff = cur_clock - last_clock;
+	} else {
+		diff = (clock_t)1;
+	}
+	
 	for (uint16_t x=0; x<EDITOR_ACTION_LEN; x++) {
 		if (isKeyPressed(EDITOR_BUTTONS[x])) {
 			if (!editor_keypress_duration[x]) {
@@ -156,7 +168,7 @@ void scan_keys(screen * sc) {
 				EDITOR_FUNCS[x](sc);
 				editor_keypress_duration[x] = ED_RESET_LOOP_COUNT;
 			}
-			editor_keypress_duration[x]++;
+			editor_keypress_duration[x] += diff;
 		} else {
 			editor_keypress_duration[x] = 0;
 		}
@@ -173,9 +185,11 @@ void scan_keys(screen * sc) {
 				insert_char(sc, x, mode);
 				insert_keypress_duration[x] = IN_RESET_LOOP_COUNT;
 			}
-			insert_keypress_duration[x]++;
+			insert_keypress_duration[x] += diff;
 		} else {
 			insert_keypress_duration[x] = 0;
 		}
 	}
+	
+	last_clock = cur_clock;
 }

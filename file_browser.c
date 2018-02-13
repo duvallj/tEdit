@@ -1,20 +1,23 @@
 #include "file_browser.h"
 
-vstring * current_directory_header;
-vstring * current_directory;
+vstring * current_directory_header = NULL;
+vstring * current_directory = NULL;
 
-vstring * filename_header;
-vstring * filename;
+vstring * filename_header = NULL;
+vstring * filename = NULL;
+
+clock_t last_clock_fb = 0;
 
 void set_current_directory_string() {
 	char cd[FILENAME_MAX];
 	getcwd(cd, sizeof(cd));
-	free(current_directory->str);
-	current_directory->str = cd;
+	freeinn(current_directory->str);
 	current_directory->len = 0;
-	while(current_directory->str[current_directory->len] != '\0') {
+	while(cd[current_directory->len] != '\0') {
 		current_directory->len++;
 	}
+	current_directory->str = malloc(sizeof(char) * current_directory->len);
+	strcpy(current_directory->str, cd);
 }
 
 void open_directory(screen * sc, const char * fqdir) {
@@ -49,7 +52,12 @@ void open_directory(screen * sc, const char * fqdir) {
 		recurse_free_lines(sc);
 		sc->topmost_line = head;
 		sc->current_line = head;
+		
+		chdir(fqdir);
+		set_current_directory_string();
+		draw_fb(sc);
 	}
+
 }
 
 void set_filename(screen * sc, char * name) {
@@ -60,8 +68,9 @@ void set_filename(screen * sc, char * name) {
 	} else {
 		sc->fqfilename = malloc(sizeof(vstring));
 	}
-	sc->fqfilename->str = name;
 	sc->fqfilename->len = strlen(name);
+	sc->fqfilename->str = malloc(sizeof(char) * (sc->fqfilename->len + 1));
+	strcpy(sc->fqfilename->str, name);
 }
 
 void init_fb(screen * sc) {
@@ -73,7 +82,7 @@ void init_fb(screen * sc) {
 	current_directory_header->len = 18;
 	
 	current_directory = malloc(sizeof(vstring));
-	current_directory->str = malloc(sizeof(char));
+	current_directory->str = NULL;
 	set_current_directory_string();
 	
 	filename_header = malloc(sizeof(vstring));
@@ -81,25 +90,28 @@ void init_fb(screen * sc) {
 	filename_header->len = 9;
 
 	filename = malloc(sizeof(vstring));
-	filename->str = "."; // Should be the first entry, anyway
+	filename->str = malloc(sizeof(char) * 2);
+	filename->str[0] = '.';
+	filename->str[1] = '\0';
 	filename->len = 1;
 
 	open_directory(sc, current_directory->str);
 }
 
 void deinit_fb(screen * sc) {
-	free(current_directory_header->str);
-	free(current_directory_header);
-
-	free(current_directory->str);
-	free(current_directory);
-
-	free(filename_header->str);
-	free(filename_header);
-
-	free(filename->str);
-	free(filename);
-
+	
+//	freeinn(current_directory_header->str);
+	freeinn(current_directory_header);
+	
+	freeinn(current_directory->str);
+	freeinn(current_directory);
+	
+//	freeinn(filename_header->str);
+	freeinn(filename_header);
+	
+	freeinn(filename->str);
+	freeinn(filename);
+	
 	recurse_free_lines(sc);
 }
 
@@ -168,7 +180,7 @@ void move_fb_cursor_right(screen * sc) {
 
 	unsigned int old_col = sc->displ_cursor_col;
 
-	if (sc->actual_cursor_col < sc->current_line->vstr->len) {
+	if (sc->actual_cursor_col < filename->len) {
 		sc->actual_cursor_col++;
 	}
 
@@ -178,6 +190,27 @@ void move_fb_cursor_right(screen * sc) {
 	}
 	sc->displ_cursor_col = sc->actual_cursor_col - sc->leftmost_index;
 	update_cursor(sc, NUM_ROWS-1, old_col, NUM_ROWS-1, sc->displ_cursor_col, 0xffff, 0x0000);
+}
+
+void fb_delete_before_cursor(screen * sc) {
+	if (sc->actual_cursor_col) {
+		vstring * st = filename;
+		uint16_t ac = sc->actual_cursor_col;
+		uint16_t x=0;
+		char * new_buffer = malloc(st->len*sizeof(char));
+		for ( ; x<ac-1; x++) {
+			new_buffer[x] = st->str[x];
+		}
+		for( ; x<st->len-1; x++ ) {
+			new_buffer[x] = st->str[x+1];
+		}
+		new_buffer[x] = '\0';
+		free(st->str);
+		st->str = new_buffer;
+		st->len--;
+		draw_fb(sc);
+		move_fb_cursor_left(sc);
+	}	
 }
 
 
@@ -200,43 +233,63 @@ void fb_enter_pressed(screen * sc) {
 	if (sc->mode == 1) {
 		printf("Is in selecting mode\n");
 		vstring fqfn = concat(*current_directory, *sc->current_line->vstr);
+		printf("%s\n", fqfn.str);
 		printf("Did a concat\n");
 		struct stat statbuf;
-		if (stat(fqfn.str, &statbuf) != 0 && S_ISDIR(statbuf.st_mode) ) {
+		stat(fqfn.str, &statbuf);
+		if (!S_ISREG(statbuf.st_mode)) {
 			printf("Trying to open directory %s\n", fqfn.str);
 			open_directory(sc, fqfn.str);
 		} else {
 			printf("Switching to editing the file name\n");
-			filename = sc->current_line->vstr;
+			if (filename != NULL) {
+				if (filename->str != NULL) {
+					free(filename->str);
+				}
+			} else {
+				filename = malloc(sizeof(vstring));
+			}
+			filename->len = sc->current_line->vstr->len;
+			filename->str = malloc(sizeof(char) * (filename->len + 1));
+			strcpy(filename->str, sc->current_line->vstr->str);
 			toggle_filename_browsing(sc);
 		}
 	}
 	else if (sc->mode == 2) {
 		printf("Is in filename editing mode\n");
 		vstring fqfn = concat(*current_directory, *filename);
+		printf("%s\n", fqfn.str);
 		printf("Did a concat\n");
 		struct stat statbuf;
-		if(stat(fqfn.str, &statbuf) != 0 && S_ISDIR(statbuf.st_mode)) {
+		int exists = stat(fqfn.str, &statbuf);
+		if(!S_ISREG(statbuf.st_mode) && exists == 0) {
 			open_directory(sc, fqfn.str);
 		} else {
 			printf("Opening file sequence\n");
 			free(sc->fqfilename);
-			printf("a\n");
+
 			sc->fqfilename = malloc(sizeof(vstring));
 			sc->fqfilename->str = malloc(sizeof(char) * (fqfn.len + 1));
-			printf("b\n");
+			
 			strcpy(sc->fqfilename->str, fqfn.str);
 			sc->fqfilename->len = fqfn.len;
-			printf("c\n");
+			
 			vstring data = read_file(fqfn.str);
-			printf("d\n");
+			
 			deinit_fb(sc);
 			if (data.str == NULL) {
-				data.str = "";
+				data.str = "\n";
+				data.len = 1;
 			}
-			printf("e\n");
+			printf("Now loading text\n");
 			load_text(sc, data);
-			printf("f\n");
+			printf("Loaded text?\n");
+			sc->mode = 0;
+			sc->leftmost_index = 0;
+			sc->cursor_row = 0;
+			sc->actual_cursor_col = 0;
+			sc->ideal_cursor_col = 0;
+			sc->displ_cursor_col = 0;
 		}
 	}
 }
@@ -264,6 +317,7 @@ void draw_fb(screen * sc) {
 		}
 		cl = cl->next;
 	}
+	y = NUM_ROWS - 2;
 	for(x=0; x<NUM_COLS && x<filename_header->len; x++) {
 		draw_char(sc, y, x, filename_header->str[x], 0xffff, 0);
 	}
@@ -294,6 +348,16 @@ void fb_insert_char(screen * sc, uint16_t x, char mode) {
 }
 
 void fb_scan_keys(screen * sc) {
+	clock_t cur_clock = clock();
+	
+	clock_t diff;
+	
+	if (cur_clock > last_clock_fb) {
+		diff = cur_clock - last_clock_fb;
+	} else {
+		diff = 1;
+	}
+	
 	for(uint16_t x=0; x<FB_ACTION_LEN; x++) {
 		if (isKeyPressed(FB_BUTTONS[x])) {
 			if (!fb_keypress_duration[x]) {
@@ -303,7 +367,7 @@ void fb_scan_keys(screen * sc) {
 				FB_FUNCS[x](sc);
 				fb_keypress_duration[x] = ED_RESET_LOOP_COUNT;
 			}
-			fb_keypress_duration[x]++;
+			fb_keypress_duration[x] += diff;
 		} else {
 			fb_keypress_duration[x] = 0;
 		}
@@ -320,9 +384,11 @@ void fb_scan_keys(screen * sc) {
 				fb_insert_char(sc, x, mode);
 				insert_keypress_duration[x] = IN_RESET_LOOP_COUNT;
 			}
-			insert_keypress_duration[x]++;
+			insert_keypress_duration[x] += diff;
 		} else {
 			insert_keypress_duration[x] = 0;
 		}
 	}
+	
+	last_clock_fb = cur_clock;
 }

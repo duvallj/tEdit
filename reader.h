@@ -2,6 +2,10 @@
 #define _READER_H_
 
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define freeinn(X) if (X != NULL){free(X);}
 
 typedef struct
 {
