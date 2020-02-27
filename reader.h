@@ -1,5 +1,5 @@
-#ifndef _READER_H_
-#define _READER_H_
+#ifndef READER_H
+#define READER_H
 
 #include <string.h>
 #include <stdlib.h>
@@ -17,4 +17,4 @@ extern vstring new_vstring();
 extern vstring concat(vstring a, vstring b);
 extern vstring read_file(const char * filename);
 
-#endif
+#endif // READER_H

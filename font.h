@@ -15,8 +15,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>
 ************************************************************************/
-#ifndef _FONT_H_
-#define _FONT_H_
+#ifndef FONT_H
+#define FONT_H
 /* the values in this array are a 8x8 bitmap font for ascii characters */
 static uint64_t font[128] = {
 	0x7E7E7E7E7E7E0000,	/* NUL */
@@ -149,4 +149,4 @@ static uint64_t font[128] = {
 	0x7E7E7E7E7E7E0000	/* DEL */
 };
 
-#endif
+#endif // FONT_H

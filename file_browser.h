@@ -1,5 +1,5 @@
-#ifndef _FILE_BROWSER_H_
-#define _FILE_BROWSER_H_
+#ifndef FILE_BROWSER_H
+#define FILE_BROWSER_H
 
 #include "displayer.h"
 #include "editor.h"
@@ -47,4 +47,4 @@ static void (*FB_FUNCS[FB_ACTION_LEN])(screen * sc) = {
 #define LINES_ABOVE	2
 #define LINES_BELOW	2
 
-#endif
+#endif // FILE_BROWSER_H

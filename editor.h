@@ -72,4 +72,4 @@ static char ctrl_keypress[INSERT_ACTION_LEN] = {
 
 extern void scan_keys(screen * sc);
 
-#endif
+#endif // EDITOR_H

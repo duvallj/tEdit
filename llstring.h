@@ -1,5 +1,5 @@
-#ifndef _LLSTRING_H_
-#define _LLSTRING_H_
+#ifndef LLSTRING_H
+#define LLSTRING_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,4 +21,4 @@ extern void insert_before(line_t * node, line_t * newnode);
 
 extern void debug(unsigned int value);
 
-#endif
+#endif // LLSTRING_H

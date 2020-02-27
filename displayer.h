@@ -1,5 +1,5 @@
-#ifndef _DISPLAYER_H_
-#define _DISPLAYER_H_
+#ifndef DISPLAYER_H
+#define DISPLAYER_H
 
 #include <libndls.h>
 
@@ -12,10 +12,17 @@
 #define CHAR_H		(8)
 #define CHAR_W		(8)
 
+enum EDITOR_MODE {
+  EDITING,
+  BROWSING,
+  FILENAME_EDITING
+};
+
 typedef struct
 {
-	line_t * current_line;
+	line_t * beginning_file_line;
 	line_t * topmost_line;
+	line_t * current_line;
 	unsigned int leftmost_index;
 	uint8_t cursor_row;
 	uint8_t displ_cursor_col;
@@ -23,10 +30,7 @@ typedef struct
 	unsigned int ideal_cursor_col;
 	uint16_t * buffer;
 	scr_type_t scr_type;
-	char mode;
-	// 0 = editing
-	// 1 = browsing files
-	// 2 = filename editing in file browser
+	enum EDITOR_MODE mode;
 	vstring * fqfilename;
 } screen;
 
@@ -36,7 +40,6 @@ extern void move_cursor_left(screen * sc);
 extern void move_cursor_right(screen * sc);
 extern void update_cursor(screen * sc, unsigned int old_row, unsigned int old_col, unsigned int new_row, unsigned int new_col, uint16_t fg, uint16_t bg);
 
-
 extern void draw_text(screen * sc);
 extern void draw_char(screen * sc, uint8_t row, uint8_t col, char c, uint16_t fg, uint16_t bg);
 extern void load_text(screen * sc, vstring text);
@@ -45,4 +48,4 @@ extern void deinit_screen(screen * sc);
 
 extern void recurse_free_lines(screen * sc);
 
-#endif
+#endif // DISPLAYER_H

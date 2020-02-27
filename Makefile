@@ -7,7 +7,7 @@ LD  = nspire-ld
 GENZEHN = genzehn
 
 GCCFLAGS = -Wall -W -Wno-unused-variable -Wno-unused-function -marm
-LDFLAGS =
+LDFLAGS = 
 ZEHNFLAGS = --name "tEdit"
 
 ifeq ($(DEBUG),FALSE)
@@ -16,9 +16,9 @@ else
 	GCCFLAGS += -O0 -g
 endif
 
-OBJS = $(patsubst %.c, %.o, $(shell find . -name \*.c))
-OBJS += $(patsubst %.cpp, %.o, $(shell find . -name \*.cpp))
-OBJS += $(patsubst %.S, %.o, $(shell find . -name \*.S))
+OBJS = button_init.o displayer.o editor.o file_browser.o llstring.o main.o reader.o writer.o
+#OBJS += $(patsubst %.cpp, %.o, $(shell find . -name \*.cpp))
+#OBJS += $(patsubst %.S, %.o, $(shell find . -name \*.S))
 EXE = tEdit
 DISTDIR = .
 vpath %.tns $(DISTDIR)

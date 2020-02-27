@@ -1,9 +1,9 @@
-#ifndef _WRITER_H_
-#define _WRITER_H_
+#ifndef WRITER_H
+#define WRITER_H
 
 #include "reader.h"
 #include <stdio.h>
 
 extern void write_file(const char * filename, const vstring data); 
 
-#endif
+#endif // WRITER_H
