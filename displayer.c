@@ -58,8 +58,8 @@ uint16_t rgb_to_color(unsigned char r, unsigned char g, unsigned char b) {
 
 void draw_char(screen * sc, uint8_t row, uint8_t col, char c, uint16_t fg, uint16_t bg) {
 	uint64_t bitmap = font[(int)c];
-	for ( uint8_t y=0; y<CHAR_H; y++) {
-		for ( uint8_t x=0; x<CHAR_W; x++) {
+	for (uint8_t y=0; y<CHAR_H; y++) {
+		for (uint8_t x=0; x<CHAR_W; x++) {
 			set_pixel(sc, col*CHAR_W+x, row*CHAR_H+y, (bitmap>>(63-8*y-x))&1 ? fg : bg);
 		}
 	}
@@ -70,7 +70,7 @@ void draw_text(screen * sc) {
 	//uint16_t white = rgb_to_color(0x1f, 0x3f, 0x1f);
 	//uint16_t black = rgb_to_color(0,0,0);
 	line_t * cl = sc->topmost_line;
-	for (uint8_t row=0; row<=NUM_ROWS && cl != NULL; row++) {
+	for (uint8_t row=0; row<NUM_ROWS && cl != NULL; row++) {
 		for(uint8_t col=0; col<NUM_COLS && col+sc->leftmost_index < cl->vstr->len-1; col++ ) {
 			draw_char(sc, row, col, cl->vstr->str[sc->leftmost_index + col], white, black);
 		}
@@ -142,7 +142,7 @@ void move_cursor_down(screen * sc) {
 		bool redraw = 0;
 		unsigned int old_row = sc->cursor_row;
 		unsigned int old_col = sc->displ_cursor_col;
-		if (sc->cursor_row < NUM_ROWS) {
+		if (sc->cursor_row < NUM_ROWS - 1) {
 			sc->cursor_row++;
 		} else {
 			sc->topmost_line = sc->topmost_line->next;

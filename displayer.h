@@ -6,8 +6,7 @@
 #include "llstring.h"
 #include "font.h"
 
-// -1 for some reason...
-#define NUM_ROWS 	(29)
+#define NUM_ROWS 	(30)
 #define NUM_COLS	(40)
 #define CHAR_H		(8)
 #define CHAR_W		(8)

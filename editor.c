@@ -1,6 +1,8 @@
 #include "editor.h"
 
 clock_t last_clock = 0;
+clock_t editor_keypress_duration[EDITOR_ACTION_LEN] = {0};
+clock_t insert_keypress_duration[INSERT_ACTION_LEN] = {0};
 
 void delete_before_cursor(screen * sc) {
 	if (sc->actual_cursor_col) {

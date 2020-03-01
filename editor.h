@@ -15,54 +15,17 @@ extern void delete_before_cursor(screen * sc);
 extern void insert_after_cursor(vstring * str, char c, unsigned int col);
 extern void insert_linebreak_after_cursor(screen * sc);
 
-static void (*EDITOR_FUNCS[EDITOR_ACTION_LEN])(screen * sc) = {
-	move_cursor_up,
-	move_cursor_down,
-	move_cursor_left,
-	move_cursor_right,
-	delete_before_cursor,
-	insert_linebreak_after_cursor,
-	insert_linebreak_after_cursor
-};
+extern void (* const EDITOR_FUNCS[EDITOR_ACTION_LEN])(screen * sc);
 
-t_key EDITOR_BUTTONS[EDITOR_ACTION_LEN];
-t_key INSERT_BUTTONS[INSERT_ACTION_LEN];
+extern const t_key EDITOR_BUTTONS[EDITOR_ACTION_LEN];
+extern const t_key INSERT_BUTTONS[INSERT_ACTION_LEN];
 
-extern void init_editor_buttons();
-static clock_t editor_keypress_duration[EDITOR_ACTION_LEN] = {0};
-static clock_t insert_keypress_duration[INSERT_ACTION_LEN] = {0};
+extern clock_t editor_keypress_duration[EDITOR_ACTION_LEN];
+extern clock_t insert_keypress_duration[INSERT_ACTION_LEN];
 
-static char normal_keypress[INSERT_ACTION_LEN] = {
-	'a','b','c','d','e','f',
-	'g','h','i','j','k','l',
-	'm','n','o','p','q','r',
-	's','t','u','v','w','x',
-	'y','z','1','2','3','4',
-	'5','6','7','8','9','0',
-	'.','-','=','^','(',')',
-	'*','/','+','-',',','?','%',' '
-};
-static char shift_keypress[INSERT_ACTION_LEN] = {
-	'A','B','C','D','E','F',
-	'G','H','I','J','K','L',
-	'M','N','O','P','Q','R',
-	'S','T','U','V','W','X',
-	'Y','Z','1','2','3','4',
-	'5','6','7','8','9','0',
-	':','_','>','"','[',']',
-	'#','\\','&','_',';','!','$',' '
-};
-static char ctrl_keypress[INSERT_ACTION_LEN] = {
-	'a','b','c','d','e','f',
-	'g','h','i','j','k','l',
-	'm','n','o','p','q','r',
-	's','t','u','v','w','x',
-	'y','z','1','2','3','4',
-	'5','6','7','8','9','0',
-	'.','~','<','\'','{','}',
-	'*','|','+','~','`','?','@',' '
-};
-
+extern const char normal_keypress[INSERT_ACTION_LEN];
+extern const char shift_keypress[INSERT_ACTION_LEN];
+extern const char ctrl_keypress[INSERT_ACTION_LEN];
 
 //I have no way to measure time, everything has to be done in terms of clock cycles
 #define ED_INITIAL_LOOP_COUNT	4000

@@ -27,10 +27,8 @@ int main(int argc, char *argv[]) {
 		draw_text(sc);
 	}
 	
-	init_editor_buttons();
-	init_fb_buttons();
 	printf("Finished initing\n");
-	line_t * head = sc->topmost_line;
+	//line_t * head = sc->topmost_line;
 
 	while (!isKeyPressed(KEY_NSPIRE_ESC)) {
 		switch(sc->mode) {

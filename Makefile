@@ -6,7 +6,7 @@ GXX = nspire-g++
 LD  = nspire-ld
 GENZEHN = genzehn
 
-GCCFLAGS = -Wall -W -Wno-unused-variable -Wno-unused-function -marm
+GCCFLAGS = -Wall -Wextra -Werror -Wno-error=unused-function -marm
 LDFLAGS = 
 ZEHNFLAGS = --name "tEdit"
 
@@ -16,7 +16,15 @@ else
 	GCCFLAGS += -O0 -g
 endif
 
-OBJS = button_init.o displayer.o editor.o file_browser.o llstring.o main.o reader.o writer.o
+OBJS = displayer.o \
+	   editor.o \
+	   editor_consts.o \
+	   file_browser.o \
+	   file_browser_consts.o \
+	   llstring.o \
+	   main.o \
+	   reader.o \
+	   writer.o
 #OBJS += $(patsubst %.cpp, %.o, $(shell find . -name \*.cpp))
 #OBJS += $(patsubst %.S, %.o, $(shell find . -name \*.S))
 EXE = tEdit

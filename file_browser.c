@@ -7,6 +7,7 @@ vstring * filename_header = NULL;
 vstring * filename = NULL;
 
 clock_t last_clock_fb = 0;
+clock_t fb_keypress_duration[FB_ACTION_LEN] = {0};
 
 void set_current_directory_string() {
 	char cd[FILENAME_MAX];
@@ -113,17 +114,6 @@ void deinit_fb(screen * sc) {
 	freeinn(filename);
 	
 	recurse_free_lines(sc);
-}
-
-void init_fb_buttons() {
-	FB_BUTTONS[0] = KEY_NSPIRE_UP;
-	FB_BUTTONS[1] = KEY_NSPIRE_DOWN;
-	FB_BUTTONS[2] = KEY_NSPIRE_LEFT;
-	FB_BUTTONS[3] = KEY_NSPIRE_RIGHT;
-	FB_BUTTONS[4] = KEY_NSPIRE_DEL;
-	FB_BUTTONS[5] = KEY_NSPIRE_TAB;
-	FB_BUTTONS[6] = KEY_NSPIRE_ENTER;
-	FB_BUTTONS[7] = KEY_NSPIRE_RET;
 }
 
 void move_fb_cursor_up(screen * sc) {
